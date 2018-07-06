@@ -1,0 +1,38 @@
+export EASY_RSA="/usr/share/easy-rsa"
+
+#
+# This variable should point to
+# the requested executables
+#
+export OPENSSL="openssl"
+export PKCS11TOOL="pkcs11-tool"
+export GREP="grep"
+
+export KEY_CONFIG="/etc/openvpn/easy-rsa/openssl.cnf"
+
+export KEY_DIR="/etc/openvpn/easy-rsa/keys"
+
+# Issue rm -rf warning
+echo NOTE: If you run ./clean-all, I will be doing a rm -rf on $KEY_DIR
+
+# PKCS11 fixes
+export PKCS11_MODULE_PATH="dummy"
+export PKCS11_PIN="dummy"
+
+export KEY_SIZE=${ca.get('key_size', '2048')}
+
+# In how many days should the root CA key expire?
+export CA_EXPIRE=${ca.get('expire', '3650')}
+
+# In how many days should certificates expire?
+export KEY_EXPIRE=${ca.get('key_expire', '3650')}
+
+export KEY_COUNTRY="${ca.get('country', '')}"
+export KEY_PROVINCE="${ca.get('province', '')}"
+export KEY_CITY="${ca.get('city', '')}"
+export KEY_ORG="${ca.get('org', '')}"
+export KEY_EMAIL="${ca.get('email', '')}"
+export KEY_OU="${ca.get('ou', '')}"
+
+# X509 Subject Field
+export KEY_NAME="${ca.get('name', '')}"
