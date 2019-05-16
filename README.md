@@ -1,4 +1,8 @@
 # Bundlewrap - OpenVPN Bundle
+
+## Dependencies
+- [apt-Bundle](https://github.com/sHorst/bw.bundle.apt)
+
 ## Config
         'openvpn': {
             'server_ip': '127.0.0.1',

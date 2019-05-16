@@ -1,10 +1,3 @@
-pkg_apt = {
-    'openvpn': {},
-    'easy-rsa': {},
-    'openssl': {},
-    'haveged': {},
-}
-
 svc_systemv = {
     'openvpn': {
         'needs': [
