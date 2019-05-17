@@ -50,8 +50,7 @@ directories = {
 
 actions = {
     'config_easy_rsa': {
-        'command': '. /etc/openvpn/easy-rsa/vars && ' \
-                    '/usr/share/easy-rsa/clean-all',
+        'command': '. /etc/openvpn/easy-rsa/vars && /usr/share/easy-rsa/clean-all',
         'unless': 'test -e /etc/openvpn/easy-rsa/keys/index.txt',
         'triggered': True,
         'needs': [
@@ -74,7 +73,7 @@ actions = {
         ],
     },
     'build_ca': {
-        'command':  '. /etc/openvpn/easy-rsa/vars && ' \
+        'command':  '. /etc/openvpn/easy-rsa/vars && '
                     '/usr/share/easy-rsa/pkitool --initca ca',
         'unless': 'test -e /etc/openvpn/easy-rsa/keys/ca.crt',
         'needs': [
@@ -86,7 +85,7 @@ actions = {
         ],
     },
     'build_server_key': {
-        'command':  '. /etc/openvpn/easy-rsa/vars && ' \
+        'command':  '. /etc/openvpn/easy-rsa/vars && '
                     '/usr/share/easy-rsa/pkitool --server server',
         'unless': 'test -e /etc/openvpn/easy-rsa/keys/server.crt',
         'needs': [
@@ -108,32 +107,33 @@ for client in node.metadata.get('openvpn', {}).get('clients', []):
     }
 
     actions['build_client_{}'.format(client)] = {
-        'command':  '. /etc/openvpn/easy-rsa/vars && ' \
-                    '/usr/share/easy-rsa/pkitool {} ' \
-            .format(client),
+        'command':  '. /etc/openvpn/easy-rsa/vars && '
+                    '/usr/share/easy-rsa/pkitool {} ' .format(client),
         'needs': [
             'pkg_apt:easy-rsa',
             'directory:/etc/openvpn/easy-rsa/keys',
             'action:build_ca',
             'action:build_server_key',
             'action:config_easy_rsa',
-        ],
+            ],
         'triggers': [
             'svc_systemv:openvpn:restart',
-        ],
+            ],
         'unless': 'test -e /etc/openvpn/easy-rsa/keys/{}.crt'.format(client),
     }
 
     actions['pack_client_{}'.format(client)] = {
-        'command':  'cd /etc/openvpn/clients && ' \
-                    'tar cfz vpn_client_{client}.tar.gz {client}.ovpn ' \
-                    '-C /etc/openvpn/ ta.key -C /etc/openvpn/easy-rsa/keys {client}.key {client}.crt ca.crt' \
-            .format(client=client),
+        'command':  'cd /etc/openvpn/clients && ' 
+                    'tar cfz vpn_client_{client}.tar.gz {client}.ovpn '
+                    '-C /etc/openvpn/ ta.key -C /etc/openvpn/easy-rsa/keys {client}.key {client}.crt ca.crt'
+                    .format(client=client),
+        # Pack every time
+        'unless': "false &> /dev/null",
         'needs': [
             'file:/etc/openvpn/clients/{}.ovpn'.format(client),
             'action:gen_tls-auth',
             'action:build_ca',
             'action:build_client_{}'.format(client),
-        ],
+            ],
     }
 
